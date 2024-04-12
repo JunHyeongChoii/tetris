@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "console/console.h"
+
 #define SHADOW_STRING "⛶"
 #define BLOCK_STRING "■"
 

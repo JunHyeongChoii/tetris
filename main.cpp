@@ -9,10 +9,10 @@ int main() {
 
   Game game;
 
-  while (!game.shouldExit()) {
+  while (1) { //!game.shouldExit()
     console::clear();
 
-    game.update();
+    // game.update();
     game.draw();
 
     // wait은 여기서만 호출되어야 한다.

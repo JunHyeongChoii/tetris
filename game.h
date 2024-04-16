@@ -29,6 +29,9 @@ public:
   bool shouldExit();
 
   void drawWall();
+
+  void initBorad_();
+  
   Game();
 };
 #endif

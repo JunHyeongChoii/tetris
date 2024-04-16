@@ -16,7 +16,8 @@
 
 Game::Game()
 {
-  // memset(board_, 0, sizeof(board));
+    initBorad_();
+
 }
 
 // 게임의 한 프레임을 처리한다.
@@ -28,6 +29,8 @@ void Game::update()
   {
       moveTime = DROP_DELAY;
   }
+
+  
 }
 
   // 게임 화면을 그린다.
@@ -54,7 +57,7 @@ bool Game::shouldExit()
 // drawing main game fram, next tetromino fram, holdtetromino fram
 void Game::drawWall()
 {
-  console::drawBox(0,0, BOARD_WIDTH, BOARD_HEIGHT);
+  console::drawBox(0,0, BOARD_WIDTH+1, BOARD_HEIGHT+1);
 
   std::string leftLine = " lines left";
 
@@ -62,18 +65,28 @@ void Game::drawWall()
   leftLine = std::to_string(haveDeleteLine) + leftLine;
   // Next frame
   std::string next = "Next";
-  console::drawBox(BOARD_WIDTH + 2, 0, BOARD_WIDTH + 2 +5 , BOARD_HEIGHT/4);
-  console::draw(BOARD_WIDTH + 2 + 1, 0, next);
+  console::drawBox(BOARD_WIDTH + 2 +1, 0, BOARD_WIDTH + 2 +5 +1 , BOARD_HEIGHT/4);
+  console::draw(BOARD_WIDTH + 2 + 1 +1, 0, next);
 
   // Hold frame
   std::string hold = "Hold";
-  console::drawBox(BOARD_WIDTH + 2 +6, 0, BOARD_WIDTH + 2 +5 + 6 , BOARD_HEIGHT/4);
-  console::draw(BOARD_WIDTH + 2 +5 + 2, 0, hold);
+  console::drawBox(BOARD_WIDTH + 2 +6 +1, 0, BOARD_WIDTH + 2 +5 + 6 +1, BOARD_HEIGHT/4);
+  console::draw(BOARD_WIDTH + 2 +5 + 2 +1, 0, hold);
 
     // 남은 없애야 할 줄 개수
-  console::draw(0 , BOARD_HEIGHT + 1, leftLine);
+  console::draw(0 , BOARD_HEIGHT + 1+1, leftLine);
 }
 
-
+//bord_[][] 않을 모두 0으로 초기화 한다.
+void Game::initBorad_()
+{
+  for(int i = 0 ;i<BOARD_WIDTH; i++)
+    {
+      for(int j = 0; j<BOARD_HEIGHT; j++)
+      {
+        board_[i][j] = 0;
+      }
+    }
+}
 
 

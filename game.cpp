@@ -113,7 +113,7 @@ void Game::initNow()
 
   
 
-  std::string <Tetromino> tetrominoForRand;
+  std::vector <Tetromino> tetrominoForRand;
 
   tetrominoForRand.push_back(Tetromino::I);
   tetrominoForRand.push_back(Tetromino::O);
@@ -137,5 +137,5 @@ void Game::initHold()
 
 void Game::initNext()
 {
-  
+
 }

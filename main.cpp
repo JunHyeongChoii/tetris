@@ -9,7 +9,7 @@ int main() {
 
   Game game;
 
-  while (1) { //!game.shouldExit()
+  while (!game.shouldExit()) {
     console::clear();
 
     game.update();

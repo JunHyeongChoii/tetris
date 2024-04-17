@@ -23,6 +23,10 @@ Game::Game()
 {
   initBorad_();
 
+  initNow();
+  initNext();
+  next->p();
+  
 }
 
 // 게임의 한 프레임을 처리한다.
@@ -36,7 +40,12 @@ void Game::update()
   }
 
   
-
+  if(console::key(console::K_SPACE))
+  {
+    checkHoldKey = 1;
+    initHold();
+    chagneNowHold();
+  }
 
 }
 
@@ -54,6 +63,13 @@ void Game::draw()
   {
     console::draw(2,BOARD_HEIGHT/2, "Lose");
   }
+
+  drawNext();
+  if(checkHoldKey == 1)
+  {
+    drawHold();
+  }
+  
 }
 
   // 게임 루프가 종료되어야 하는지 여부를 반환한다.
@@ -109,7 +125,7 @@ void Game::initBorad_()
 void Game::initNow()
 {//I, O, T, S, Z, J, L;
 
-  sdt::srand(std::time(nullptr));
+  std::srand(std::time(nullptr));
 
   
 
@@ -123,7 +139,7 @@ void Game::initNow()
   tetrominoForRand.push_back(Tetromino::J);
   tetrominoForRand.push_back(Tetromino::L);
 
-  int randNumber = std::(rand() % tetrominoForRand.size());
+  int randNumber = rand() % tetrominoForRand.size();
 
   now = &tetrominoForRand[randNumber];
 
@@ -131,11 +147,74 @@ void Game::initNow()
 
 void Game::initHold()
 {
-
+  hold = now->original();
 }
 
 
 void Game::initNext()
 {
+  std::srand(std::time(nullptr));
 
+  
+
+  std::vector <Tetromino> tetrominoForRand;
+
+  tetrominoForRand.push_back(Tetromino::I);
+  tetrominoForRand.push_back(Tetromino::O);
+  tetrominoForRand.push_back(Tetromino::T);
+  tetrominoForRand.push_back(Tetromino::S);
+  tetrominoForRand.push_back(Tetromino::Z);
+  tetrominoForRand.push_back(Tetromino::J);
+  tetrominoForRand.push_back(Tetromino::L);
+
+  int randNumber = rand() % tetrominoForRand.size();
+
+  next = &tetrominoForRand[randNumber];
+}
+
+void Game::chagneNowHold()
+{
+  *now = *hold;
+}
+
+void Game::drawHold()
+{
+    int size = next->size();
+    for(int i = 1; i<  size +1; i++)
+    {
+      for(int j = 1; j <size+1; j++ )
+      {
+        if(hold->check(i-1,j-1) == 1)
+        {
+          hold->drawAt(BLOCK_STRING,(j + BOARD_WIDTH +9),i+1);
+        }
+        
+      }
+    }
+}
+
+void Game::drawNext()
+{
+    int size = next->size();
+    for(int i = 1; i<  size +1; i++)
+    {
+      for(int j = 1; j <size+1; j++ )
+      {
+        if(next->check(i-1,j-1) == 1)
+        {
+          next->drawAt(BLOCK_STRING,(j + BOARD_WIDTH + 3),i+1);
+        }
+      }
+    }
+
+    // for(int i = 1; i<  BOARD_HEIGHT/4 ; i++)
+    // {
+    //   for(int j = BOARD_WIDTH + 4; j < BOARD_WIDTH + 8; j++ )
+    //   {
+    //     if(next->check(j-(BOARD_WIDTH + 4),i-1) == 1)
+    //     {
+    //       next->drawAt(BLOCK_STRING,i,j);
+    //     }
+    //   }
+    // }
 }

@@ -29,11 +29,19 @@ private:
 
   void initBorad_();
 
-  void initNow():
+  void initNow();
 
   void initHold();
 
   void initNext();
+
+  void chagneNowHold();
+
+  bool checkHoldKey = 0; // hold가 눌렸는지 확인한다. 눌리지 않았으면 출력하지 않는다.
+
+  void drawHold();
+
+  void drawNext();
 
 public:
   // 게임의 한 프레임을 처리한다.

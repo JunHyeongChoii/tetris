@@ -2,6 +2,7 @@
 #define TETROMINO_H
 
 #include <string>
+#include <iostream>
 
 #include "console/console.h"
 
@@ -68,6 +69,31 @@ public:
   // 테트로미노의 좌상단 기준 x, y 위치에 블록이 있는지 여부를 나타내는 함수
   bool check(int x, int y) { return shape_[x][y]; }
 
+
+  void p()
+  {
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
+    
+    for(int i = 0; i < size_; i++)
+    {
+      std::cout << " ";
+      std::cout << " ";
+      std::cout << " ";
+      for(int j = 0; j< size_; j++)
+      {
+        std::cout << shape_[i][j]<< " ";
+      }
+      std::cout << std::endl;
+
+    }
+    
+  }
   // 각 테트로미노 종류에 대한 선언
   // cpp 파일에서 Tetromino Tetromino::I(...); 와 같이 구현한다
   static Tetromino I, O, T, S, Z, J, L;

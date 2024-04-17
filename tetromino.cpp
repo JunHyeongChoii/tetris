@@ -27,10 +27,12 @@ Tetromino::Tetromino(std::string name, int size, std::string shape)
   {
     for(int j = 0; j< size; j++)
     {
-      if('X' == shape[a])
-        shape_[i][j] = 0;
-      else
+      
+      if('O' == shape[a])
         shape_[i][j] = 1;
+
+      else
+        shape_[i][j] = 0;
         
       a++;
     }
@@ -93,8 +95,8 @@ Tetromino Tetromino::rotatedCCW()
   // 화면의 x, y 위치에 s 문자열로  테트로미노를 그린다
 void Tetromino::drawAt(std::string s, int x, int y)
 {
-  if(shape_[x][y])
-    console::draw(x,y,s);
+  
+  console::draw(x,y,s);
   
 }
 

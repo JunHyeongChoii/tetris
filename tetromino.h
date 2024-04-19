@@ -58,10 +58,10 @@ public:
   Tetromino *original() { return original_; }
 
   // 시계 방향으로 회전한 모습의 테트로미노 객체를 반환한다.
-  Tetromino rotatedCW();
+  Tetromino rotatedCW(); // console::key(console::K_X)
 
   // 반시계 방향으로 회전한 모습의 테트로미노 객체를 반환한다.
-  Tetromino rotatedCCW();
+  Tetromino rotatedCCW(); // console::key(console::K_Y)
 
   // 화면의 x, y 위치에 s 문자열로  테트로미노를 그린다
   void drawAt(std::string s, int x, int y);
@@ -70,30 +70,30 @@ public:
   bool check(int x, int y) { return shape_[x][y]; }
 
 
-  void p()
-  {
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
-    std::cout << std::endl;
+  // void p()
+  // {
+  //   std::cout << std::endl;
+  //   std::cout << std::endl;
+  //   std::cout << std::endl;
+  //   std::cout << std::endl;
+  //   std::cout << std::endl;
+  //   std::cout << std::endl;
+  //   std::cout << std::endl;
     
-    for(int i = 0; i < size_; i++)
-    {
-      std::cout << " ";
-      std::cout << " ";
-      std::cout << " ";
-      for(int j = 0; j< size_; j++)
-      {
-        std::cout << shape_[i][j]<< " ";
-      }
-      std::cout << std::endl;
+  //   for(int i = 0; i < size_; i++)
+  //   {
+  //     std::cout << " ";
+  //     std::cout << " ";
+  //     std::cout << " ";
+  //     for(int j = 0; j< size_; j++)
+  //     {
+  //       std::cout << shape_[i][j]<< " ";
+  //     }
+  //     std::cout << std::endl;
 
-    }
+  //   }
     
-  }
+  // }
   // 각 테트로미노 종류에 대한 선언
   // cpp 파일에서 Tetromino Tetromino::I(...); 와 같이 구현한다
   static Tetromino I, O, T, S, Z, J, L;

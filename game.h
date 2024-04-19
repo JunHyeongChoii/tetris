@@ -24,24 +24,31 @@ private:
   Tetromino* now;
   Tetromino* next;
   Tetromino* hold;
+  Tetromino *temp;
 
   void drawWall();
-
-  void initBorad_();
-
-  void initNow();
-
-  void initHold();
-
-  void initNext();
-
-  void chagneNowHold();
-
-  bool checkHoldKey = 0; // hold가 눌렸는지 확인한다. 눌리지 않았으면 출력하지 않는다.
-
+  void drawBoard();
   void drawHold();
-
   void drawNext();
+  void drawNowT();
+
+  void initBoard_();
+  void initNow();
+  void initHold();  // 현재 테트로미노 hold
+  void initNext(); // next tetromino 생성
+  void initXXYY();
+  void changeNowHold();
+
+  void keepOrigianl();
+
+  void checkXXYY();
+  int checkXXsize;
+  int checkYYsize;
+
+  int checkHoldKey = 0; // hold가 눌렸는지 확인한다. 눌리지 않았으면 출력하지 않는다.
+
+  int xx = BOARD_WIDTH/2 -1;  // 커질수록 오른쪽 작아질수록 왼쪽
+  int yy = 1; // 커질수록 밑으로 내려간다.
 
 public:
   // 게임의 한 프레임을 처리한다.

@@ -49,17 +49,20 @@ Tetromino Tetromino::rotatedCW()
 
   bool temp[MAX_SIZE][MAX_SIZE];
 
-  for(int i = 0; i<size_; i++)
+  for(int i = 0; i<MAX_SIZE; i++)
   {
-    for(int j = 0; j<size_; j++)
+    for(int j = 0; j<MAX_SIZE; j++)
     {
-      temp[j][size_ -1 -i] = shape_[i][j];
+      if(i >=0 && i<size_ &&  j >=0 && j<size_ )
+        temp[j][size_ -1 -i] = shape_[i][j];
+      else
+        temp[i][j] = 0;
     }
   }
 
-  for(int i = 0; i< size_; i++)
+  for(int i = 0; i< MAX_SIZE; i++)
   {
-    for(int j = 0; j< size_; j++)
+    for(int j = 0; j< MAX_SIZE; j++)
     {
       rotated.shape_[i][j] = temp[i][j];
     }
@@ -73,13 +76,17 @@ Tetromino Tetromino::rotatedCCW()
 {
   Tetromino rotated = *this;
 
-  bool temp[MAX_SIZE][MAX_SIZE];
+  bool temp[MAX_SIZE][MAX_SIZE]; 
+  
 
-  for(int i = 0; i<size_; i++)
+  for(int i = 0; i<MAX_SIZE; i++)
   {
-    for(int j = 0; j<size_; j++)
+    for(int j = 0; j<MAX_SIZE; j++)
     {
-      temp[size_ -1 -j][i] = shape_[i][j];
+      if(i >=0 && i<size_ &&  j >=0 && j<size_ )
+        temp[size_ -1 -j][i] = shape_[i][j];
+      else
+        temp[i][j] = 0;
     }
   }
 
@@ -90,6 +97,7 @@ Tetromino Tetromino::rotatedCCW()
       rotated.shape_[i][j] = temp[i][j];
     }
   }
+  return rotated;
 }
 
   // 화면의 x, y 위치에 s 문자열로  테트로미노를 그린다

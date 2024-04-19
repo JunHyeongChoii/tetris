@@ -1,5 +1,7 @@
 #include "console/console.h"
 #include "game.h"
+#include "tetromino.h"
+
 #include <cstdlib>
 #include <ctime>
 

@@ -21,11 +21,12 @@
 
 Game::Game()
 {
-  initBorad_();
-
+  initBoard_();
+  initXXYY();
   initNow();
   initNext();
-  next->p();
+  
+  // now->p();
   
 }
 
@@ -34,17 +35,104 @@ Game::Game()
 void Game::update()
 {
   moveTime--;
-  if(moveTime == 0)
+  if(moveTime == 0) // 60프레임에 맞춰서 떨어진다.
   {
       moveTime = DROP_DELAY;
+      yy++;
+  }
+  else if(console::key(console::K_DOWN))
+  {
+    yy++;
+    moveTime = DROP_DELAY;
   }
 
   
-  if(console::key(console::K_SPACE))
+  if(console::key(console::K_SPACE) && checkHoldKey == 0) // HOLD 그냥 처음할때
   {
-    checkHoldKey = 1;
+    checkHoldKey = 2;
     initHold();
-    chagneNowHold();
+  
+    now = next->original();
+    initNext();
+    initXXYY();
+  }
+  // hold 한번 누르면 무조건 써야한다. (hold 연속으로 눌리지 않는다.)
+  else if(console::key(console::K_SPACE) && checkHoldKey == 1) 
+  {
+    checkHoldKey = 2;
+    changeNowHold();
+    initXXYY();
+  }
+
+  if(console::key(console::K_LEFT) )// xx ■(==1) 제일 작은값이 0이 아닐때
+  {
+
+    xx--;
+  }
+
+  else if(console::key(console::K_RIGHT)) // xx ■(==1) 제일 큰값이 BOARD_WIDTH +1 아닐때
+  {
+    xx++;
+  }
+
+
+
+
+
+  if(console::key(console::K_X)) // 시계 방향으로 회전
+  {
+    *now = now->rotatedCW();
+  }
+
+  else if(console::key(console::K_Z)) // 반시계 반향으로 회전
+  {
+    *now = now->rotatedCCW();
+  }
+
+
+  // board_ 한 줄 다 채워졌을 때
+  int fullLine = 0;
+
+  for(int i = BOARD_HEIGHT-1; i >= 0; i--)
+  {
+    for(int j = 0; j < BOARD_WIDTH; j++)
+    {
+      if(board_[j][i] == 1)
+      {
+        fullLine++;
+      }
+    }
+    if(fullLine == 10)
+    {
+      haveDeleteLine --;
+      fullLine = 0;
+
+      int ii = i; // 없어진줄 확인하고 저장하고 한칸씩 땡기고 맨 윗줄은 0으로 채워준다.
+      if(ii != 0)
+      {
+        for(ii; ii>= 0; ii--)
+        {
+          for(int jj = 0; jj< BOARD_WIDTH; jj++)
+          {
+            if(ii != 0)
+            {
+              board_[jj][ii] =board_[jj][ii-1];
+            }
+            else
+            {
+              board_[jj][ii] = 0;
+            }
+          }
+        }
+      }
+      else
+      {
+        for(int jj = 0; jj< BOARD_WIDTH; jj++)
+        {
+          board_[ii][jj] = 0;
+        }
+      }
+    }
   }
 
 }
@@ -53,7 +141,7 @@ void Game::update()
 void Game::draw()
 {
   drawWall();
-
+  drawBoard();
   if(haveDeleteLine == 0)
   {
     console::draw(2,BOARD_HEIGHT/2,"You Win");
@@ -65,11 +153,16 @@ void Game::draw()
   }
 
   drawNext();
-  if(checkHoldKey == 1)
+
+  if(checkHoldKey > 0 )
   {
     drawHold();
   }
-  
+
+  drawNowT();
+
+
+
 }
 
   // 게임 루프가 종료되어야 하는지 여부를 반환한다.
@@ -109,8 +202,8 @@ void Game::drawWall()
   console::draw(0 , BOARD_HEIGHT + 1+1, leftLine);
 }
 
-//bord_[][] 않을 모두 0으로 초기화 한다.
-void Game::initBorad_()
+//bord_[][] 내부를 모두 0으로 초기화 한다.
+void Game::initBoard_()
 {
   for(int i = 0 ;i<BOARD_WIDTH; i++)
     {
@@ -125,7 +218,7 @@ void Game::initBorad_()
 void Game::initNow()
 {//I, O, T, S, Z, J, L;
 
-  std::srand(std::time(nullptr));
+  // std::srand(std::time(nullptr));
 
   
 
@@ -139,7 +232,7 @@ void Game::initNow()
   tetrominoForRand.push_back(Tetromino::J);
   tetrominoForRand.push_back(Tetromino::L);
 
-  int randNumber = rand() % tetrominoForRand.size();
+  int randNumber = std::rand() % tetrominoForRand.size();
 
   now = &tetrominoForRand[randNumber];
 
@@ -153,7 +246,7 @@ void Game::initHold()
 
 void Game::initNext()
 {
-  std::srand(std::time(nullptr));
+  // std::srand(std::time(nullptr));
 
   
 
@@ -167,19 +260,27 @@ void Game::initNext()
   tetrominoForRand.push_back(Tetromino::J);
   tetrominoForRand.push_back(Tetromino::L);
 
-  int randNumber = rand() % tetrominoForRand.size();
+  int randNumber = std::rand() % tetrominoForRand.size();
 
   next = &tetrominoForRand[randNumber];
 }
 
-void Game::chagneNowHold()
+void Game::initXXYY()
 {
-  *now = *hold;
+  xx = BOARD_WIDTH/2 -1;  // 커질수록 오른쪽 작아질수록 왼쪽
+  yy = 1; // 커질수록 밑으로 내려간다.
+}
+
+void Game::changeNowHold()
+{
+  keepOrigianl();
+  now = hold -> original();
+  hold = temp->original();
 }
 
 void Game::drawHold()
 {
-    int size = next->size();
+    int size = hold->size();
     for(int i = 1; i<  size +1; i++)
     {
       for(int j = 1; j <size+1; j++ )
@@ -207,14 +308,49 @@ void Game::drawNext()
       }
     }
 
-    // for(int i = 1; i<  BOARD_HEIGHT/4 ; i++)
-    // {
-    //   for(int j = BOARD_WIDTH + 4; j < BOARD_WIDTH + 8; j++ )
-    //   {
-    //     if(next->check(j-(BOARD_WIDTH + 4),i-1) == 1)
-    //     {
-    //       next->drawAt(BLOCK_STRING,i,j);
-    //     }
-    //   }
-    // }
+
+}
+
+void Game::drawBoard()
+{
+  for(int i = BOARD_HEIGHT-1; i >= 0; i--)
+  {
+    for(int j = 0; j < BOARD_WIDTH; j++)
+    { 
+      if(board_[j][i] == 1)
+        console::draw(i+1, j+1, BLOCK_STRING );
+    }
+  }
+}
+
+void Game::drawNowT()
+{
+  int size = now->size();
+
+  for(int i = 0; i<size; i++)
+  {
+    for(int j = 0; j< size; j++)
+    {
+      if(now->check(i,j) == 1)
+      {
+        now->drawAt(BLOCK_STRING, (j + xx), i + yy);
+      }
+    }
+  }
+}
+
+void Game::keepOrigianl()
+{
+  temp = now->original();
+}
+
+void checkXXYY()
+{
+   for(int i = BOARD_HEIGHT-1; i >= 0; i--)
+  {
+    for(int j = 0; j < BOARD_WIDTH; j++)
+    { 
+      
+    }
+  }
 }

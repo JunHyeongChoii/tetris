@@ -40,16 +40,21 @@ private:
   void changeNowHold();
 
   void keepOrigianl();
+  void xxMinMax();
+  
+  void fillBoard(int x, int y);
 
-  void checkXXYY();
-  int checkXXsize;
-  int checkYYsize;
+  int checkXXsizeMin = BOARD_WIDTH/2;
+  int checkXXsizeMax = BOARD_WIDTH/2;
+
+  int checkYYsizeMax = 1;
 
   int checkHoldKey = 0; // hold가 눌렸는지 확인한다. 눌리지 않았으면 출력하지 않는다.
 
-  int xx = BOARD_WIDTH/2 -1;  // 커질수록 오른쪽 작아질수록 왼쪽
+  int xx = BOARD_WIDTH/2 -1;  // 커질수록 오른쪽 작아질수록 왼쪽     0< j+xx < 
   int yy = 1; // 커질수록 밑으로 내려간다.
 
+  bool lose = 0;
 public:
   // 게임의 한 프레임을 처리한다.
   void update();

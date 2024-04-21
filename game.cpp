@@ -38,44 +38,69 @@ void Game::update()
   if(moveTime == 0) // 60프레임에 맞춰서 떨어진다.
   {
       moveTime = DROP_DELAY;
-      yy++;
+      if(checkYYsizeMax <BOARD_HEIGHT)
+        yy++;
   }
-  else if(console::key(console::K_DOWN))
+  else if(console::key(console::K_DOWN) && checkYYsizeMax <BOARD_HEIGHT)
   {
     yy++;
     moveTime = DROP_DELAY;
   }
 
+  // checkYYsizeMax = 1;
+  xxMinMax();
   
   if(console::key(console::K_SPACE) && checkHoldKey == 0) // HOLD 그냥 처음할때
   {
+    // moveTime = DROP_DELAY;
     checkHoldKey = 2;
     initHold();
   
     now = next->original();
     initNext();
     initXXYY();
+    checkYYsizeMax = 1;
   }
   // hold 한번 누르면 무조건 써야한다. (hold 연속으로 눌리지 않는다.)
   else if(console::key(console::K_SPACE) && checkHoldKey == 1) 
   {
+    // moveTime = DROP_DELAY;
     checkHoldKey = 2;
     changeNowHold();
     initXXYY();
+    checkYYsizeMax = 1;
+   
   }
 
-  if(console::key(console::K_LEFT) )// xx ■(==1) 제일 작은값이 0이 아닐때
-  {
-
+  if(console::key(console::K_LEFT) && checkXXsizeMin > 1)// xx ■(==1) 제일 작은값이 0이 아닐때
+  {  
     xx--;
   }
 
-  else if(console::key(console::K_RIGHT)) // xx ■(==1) 제일 큰값이 BOARD_WIDTH +1 아닐때
+  if(console::key(console::K_RIGHT) && checkXXsizeMax <BOARD_WIDTH) // xx ■(==1) 제일 큰값이 BOARD_WIDTH +1 아닐때
   {
     xx++;
   }
+  checkXXsizeMin = BOARD_WIDTH/2;
+  checkXXsizeMax = BOARD_WIDTH/2;
 
+  // if(console::key(console::K_UP))
+  // {
+  //   for(int i = BOARD_HEIGHT-1; i >= 0; i--)
+  //   {
+  //     for(int jj = 0; jj< 25; jj ++)
+  //     {
+  //       std::cout <<" ";
+  //     }
+  //     for(int j = 0; j < BOARD_WIDTH; j++)
+  //     { 
+  //       //board_[j][i] =1; //확인용
 
+  //       std::cout << board_[j][i] << " ";
+  //     }
+  //     std::cout << std::endl;
+  //   }
+  // }
 
 
 
@@ -133,6 +158,7 @@ void Game::update()
         }
       }
     }
+    fullLine = 0;
   }
 
 }
@@ -141,6 +167,7 @@ void Game::update()
 void Game::draw()
 {
   drawWall();
+  drawNowT();
   drawBoard();
   if(haveDeleteLine == 0)
   {
@@ -159,8 +186,24 @@ void Game::draw()
     drawHold();
   }
 
-  drawNowT();
+  int size = now->size();
+  for(int i = 0; i<size; i++)
+  {
+    for(int j = 0; j<size; j++)
+    {
+      if(now->check(i,j) == 1)
+      {
+        if(board_[j+(BOARD_WIDTH/2 -1)][i+1] == 1)
+        {
+          console::draw(2,BOARD_HEIGHT/2, "You Lose");
+          
+          lose = 1;
+        }
+      }
+    }
 
+  }
+  
 
 
 }
@@ -168,14 +211,19 @@ void Game::draw()
   // 게임 루프가 종료되어야 하는지 여부를 반환한다.
 bool Game::shouldExit()
 {
-  std::string Lose = "You Lose";
+ 
   if(console::key(console::K_ESC))
   {
-    console::draw(2,BOARD_HEIGHT/2, Lose);
-
     return 1;
   }
-
+  if(haveDeleteLine == 0)
+  {
+    return 1;
+  }
+  if(lose == 1)
+  {
+    return 1;
+  }
   return 0;
 }
 
@@ -218,9 +266,6 @@ void Game::initBoard_()
 void Game::initNow()
 {//I, O, T, S, Z, J, L;
 
-  // std::srand(std::time(nullptr));
-
-  
 
   std::vector <Tetromino> tetrominoForRand;
 
@@ -248,8 +293,6 @@ void Game::initNext()
 {
   // std::srand(std::time(nullptr));
 
-  
-
   std::vector <Tetromino> tetrominoForRand;
 
   tetrominoForRand.push_back(Tetromino::I);
@@ -269,6 +312,7 @@ void Game::initXXYY()
 {
   xx = BOARD_WIDTH/2 -1;  // 커질수록 오른쪽 작아질수록 왼쪽
   yy = 1; // 커질수록 밑으로 내려간다.
+  // checkYYsizeMax = 1;
 }
 
 void Game::changeNowHold()
@@ -317,10 +361,14 @@ void Game::drawBoard()
   {
     for(int j = 0; j < BOARD_WIDTH; j++)
     { 
+      //board_[j][i] =1; //확인용
       if(board_[j][i] == 1)
-        console::draw(i+1, j+1, BLOCK_STRING );
+        console::draw(j+1, i+1, BLOCK_STRING );
     }
   }
+
+
+
 }
 
 void Game::drawNowT()
@@ -344,13 +392,94 @@ void Game::keepOrigianl()
   temp = now->original();
 }
 
-void checkXXYY()
+void Game::xxMinMax()
 {
-   for(int i = BOARD_HEIGHT-1; i >= 0; i--)
+  int size = now->size();
+  bool checkOne = 0;
+  int iii = BOARD_HEIGHT;
+  for(int i = 0; i<size; i++)
   {
-    for(int j = 0; j < BOARD_WIDTH; j++)
-    { 
-      
+    int holdiii = BOARD_HEIGHT;
+    for(int j = 0; j< size; j++)
+    {
+      if(now->check(i,j) == 1)
+      {
+        if(checkXXsizeMin > (j + xx))
+        {
+          checkXXsizeMin = j + xx;
+        }
+        if(checkXXsizeMax < (j+xx))
+        {
+          checkXXsizeMax = j+ xx;
+        }
+        if(checkYYsizeMax < i+ yy )
+        {
+          checkYYsizeMax = i + yy;
+
+        }
+
+        if (board_[j+xx-1][i+yy-1] == 1)
+        {
+          checkYYsizeMax =BOARD_HEIGHT -1;
+
+           holdiii = i+ yy -1;
+           checkOne = 1;
+          
+        }
+      }
+    }
+    if ( iii > holdiii)
+    {
+      iii = holdiii;
     }
   }
+  if(checkYYsizeMax == BOARD_HEIGHT -1 )
+  {
+    for(int i = 0; i< size; i++)
+    {
+      for(int j = 0; j<size; j++)
+      {
+        if(now->check(i,j) == 1)
+        {
+          if(checkYYsizeMax == BOARD_HEIGHT-1 )
+          { 
+            if(checkOne == 1)
+            {
+              //int ii = iii - i  ;
+              
+              // if(i+yy == BOARD_HEIGHT -1)
+              // {
+              //   fillBoard(j+ xx, i+yy-1);
+              // }
+              // else
+              // {
+                fillBoard(j+ xx, i+yy-2);
+              // }
+            }
+
+            else
+            {
+              fillBoard(j+xx, i + yy);
+            }
+            
+          }
+        }
+      }
+    }
+    checkOne = 0;
+    moveTime = DROP_DELAY;
+    checkYYsizeMax = 1;
+    now = next->original();
+    initNext();
+    initXXYY();
+    if (checkHoldKey ==2 )
+      checkHoldKey = 1;
+
+  }
+}
+
+
+void Game::fillBoard(int x, int y)
+{
+  board_[x-1][y] = 1;
 }

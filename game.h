@@ -55,6 +55,7 @@ private:
   int yy = 1; // 커질수록 밑으로 내려간다.
 
   bool lose = 0;
+  int minY = BOARD_HEIGHT;  // shadow y크기 찾는용
 public:
   // 게임의 한 프레임을 처리한다.
   void update();

@@ -101,8 +101,28 @@ void Game::update()
   //     std::cout << std::endl;
   //   }
   // }
+  int size = now->size();
+  minY = BOARD_HEIGHT; 
+  for (int i = 0; i<size; i++)
+  {
+    for(int j = 0; j<size; j++)
+    {
+      if(now->check(i,j) == 1)
+      {
+        for(int k = 0; k < BOARD_HEIGHT; k++)
+        {
+          if(board_[j +BOARD_WIDTH/2 -1 ][k] ==1)
+          {
+            if(minY > k)
+            {
+              minY = k;
+            }
+          }
 
-
+        }
+      }
+    }
+  }
 
   if(console::key(console::K_X)) // 시계 방향으로 회전
   {
@@ -204,6 +224,18 @@ void Game::draw()
 
   }
   
+  //shadow draw
+  for(int i = 0; i<size; i++)
+  {
+    for(int j= 0; j<size; j++)
+    {
+      if(now->check(i,j) == 1)
+      {
+        now->drawAt(SHADOW_STRING, j+xx, i+minY-1);
+      }
+    }
+  }
+  minY = BOARD_HEIGHT;
 
 
 }
